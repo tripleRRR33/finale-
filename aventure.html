@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Création de Fiche d'Aventure</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1>Créer une Fiche d'Aventure</h1>
+    <form id="fiche-aventure-form">
+        <div class="form-group">
+            <label for="titre">Titre de l'aventure :</label>
+            <input type="text" id="titre" name="titre" required>
+        </div>
+        <div class="form-group">
+            <label for="lieu">Lieu principal :</label>
+            <input type="text" id="lieu" name="lieu">
+        </div>
+        <div class="form-group">
+            <label for="objectif">Objectif principal :</label>
+            <textarea id="objectif" name="objectif" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="description">Description de l'aventure :</label>
+            <textarea id="description" name="description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="pnj">Personnages Non Joueurs (PNJ) :</label>
+            <textarea id="pnj" name="pnj" placeholder="Listez les PNJ importants, séparés par des virgules"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="creatures">Créatures rencontrées :</label>
+            <textarea id="creatures" name="creatures" placeholder="Listez les créatures importantes, séparées par des virgules"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="recompenses">Récompenses potentielles :</label>
+            <textarea id="recompenses" name="recompenses"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="dangers">Dangers ou obstacles :</label>
+            <textarea id="dangers" name="dangers"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="image">Télécharger une image de l'aventure :</label>
+            <input type="file" id="image" name="image" accept="image/*">
+            <img id="image-preview" alt="Aperçu de l'image" style="margin-top: 10px; max-width: 200px; max-height: 200px;">
+        </div>
+        <button type="button" id="telecharger-pdf">Télécharger en PDF</button>
+    </form>
+
+    <script>
+        document.getElementById('image').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('image-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('telecharger-pdf').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const titre = document.getElementById('titre').value;
+            const lieu = document.getElementById('lieu').value;
+            const objectif = document.getElementById('objectif').value;
+            const description = document.getElementById('description').value;
+            const pnj = document.getElementById('pnj').value;
+            const creatures = document.getElementById('creatures').value;
+            const recompenses = document.getElementById('recompenses').value;
+            const dangers = document.getElementById('dangers').value;
+
+            let y = 10;
+            doc.text(`Titre : ${titre}`, 10, y);
+            y += 10;
+            doc.text(`Lieu principal : ${lieu}`, 10, y);
+            y += 10;
+            doc.text(`Objectif principal :`, 10, y);
+            y += 10;
+            doc.text(objectif, 10, y);
+            y += 20;
+            doc.text(`Description :`, 10, y);
+            y += 10;
+            doc.text(description, 10, y);
+            y += 20;
+            doc.text(`PNJ : ${pnj}`, 10, y);
+            y += 10;
+            doc.text(`Créatures : ${creatures}`, 10, y);
+            y += 10;
+            doc.text(`Récompenses :`, 10, y);
+            y += 10;
+            doc.text(recompenses, 10, y);
+            y += 20;
+            doc.text(`Dangers :`, 10, y);
+            y += 10;
+            doc.text(dangers, 10, y);
+
+            const image = document.getElementById('image-preview');
+            if (image.src && image.src.startsWith('data:image')) {
+                doc.addImage(image.src, 'JPEG', 10, y, 50, 50);
+            }
+
+            doc.save(`${titre}_fiche_aventure.pdf`);
+        });
+    </script>
+</body>
+</html>
