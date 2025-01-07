@@ -176,70 +176,79 @@
         <button type="button" id="telecharger-pdf">Télécharger en PDF</button>
     </form>
 
-    <script>
-        document.getElementById('image').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('image-preview').src = e.target.result;
-                };
-                reader.readAsDataURL(file);
+  <script>
+    document.getElementById('telecharger-pdf').addEventListener('click', function() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const nom = document.getElementById('nom').value;
+        const age = document.getElementById('age').value;
+        const race = document.getElementById('race').value;
+        const profession = document.getElementById('profession').value;
+        const description = document.getElementById('description').value;
+        const personnalite = document.getElementById('personnalite').value;
+        const histoire = document.getElementById('histoire').value;
+        const pouvoirs = document.getElementById('pouvoirs').value;
+        const armes = document.getElementById('armes').value;
+        const allies = document.getElementById('allies').value;
+        const ennemis = document.getElementById('ennemis').value;
+
+        let y = 10;
+        doc.text(`Nom : ${nom}`, 10, y);
+        y += 10;
+        doc.text(`Âge : ${age}`, 10, y);
+        y += 10;
+        doc.text(`Race : ${race}`, 10, y);
+        y += 10;
+        doc.text(`Profession : ${profession}`, 10, y);
+        y += 10;
+        doc.text(`Description physique :`, 10, y);
+        y += 10;
+        doc.text(description, 10, y);
+        y += 20;
+        doc.text(`Traits de personnalité :`, 10, y);
+        y += 10;
+        doc.text(personnalite, 10, y);
+        y += 20;
+        doc.text(`Histoire :`, 10, y);
+        y += 10;
+        doc.text(histoire, 10, y);
+        y += 20;
+        doc.text(`Pouvoirs : ${pouvoirs}`, 10, y);
+        y += 10;
+        doc.text(`Armes : ${armes}`, 10, y);
+        y += 10;
+        doc.text(`Alliés : ${allies}`, 10, y);
+        y += 10;
+        doc.text(`Ennemis : ${ennemis}`, 10, y);
+
+        const image = document.getElementById('image-preview');
+        if (image.src && image.src.startsWith('data:image')) {
+            doc.addImage(image.src, 'JPEG', 10, y, 50, 50);
+        }
+
+        const pdfData = doc.output('blob');
+
+        const formData = new FormData();
+        formData.append('file', pdfData, `${nom}_fiche_personnage.pdf`);
+
+        fetch('/.netlify/functions/upload-pdf', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('PDF sauvegardé avec succès!');
+            } else {
+                alert('Échec de la sauvegarde du PDF.');
             }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la sauvegarde du PDF.');
         });
-
-        document.getElementById('telecharger-pdf').addEventListener('click', function() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            const nom = document.getElementById('nom').value;
-            const age = document.getElementById('age').value;
-            const race = document.getElementById('race').value;
-            const profession = document.getElementById('profession').value;
-            const description = document.getElementById('description').value;
-            const personnalite = document.getElementById('personnalite').value;
-            const histoire = document.getElementById('histoire').value;
-            const pouvoirs = document.getElementById('pouvoirs').value;
-            const armes = document.getElementById('armes').value;
-            const allies = document.getElementById('allies').value;
-            const ennemis = document.getElementById('ennemis').value;
-
-            let y = 10;
-            doc.text(`Nom : ${nom}`, 10, y);
-            y += 10;
-            doc.text(`Âge : ${age}`, 10, y);
-            y += 10;
-            doc.text(`Race : ${race}`, 10, y);
-            y += 10;
-            doc.text(`Profession : ${profession}`, 10, y);
-            y += 10;
-            doc.text(`Description physique :`, 10, y);
-            y += 10;
-            doc.text(description, 10, y);
-            y += 20;
-            doc.text(`Traits de personnalité :`, 10, y);
-            y += 10;
-            doc.text(personnalite, 10, y);
-            y += 20;
-            doc.text(`Histoire :`, 10, y);
-            y += 10;
-            doc.text(histoire, 10, y);
-            y += 20;
-            doc.text(`Pouvoirs : ${pouvoirs}`, 10, y);
-            y += 10;
-            doc.text(`Armes : ${armes}`, 10, y);
-            y += 10;
-            doc.text(`Alliés : ${allies}`, 10, y);
-            y += 10;
-            doc.text(`Ennemis : ${ennemis}`, 10, y);
-
-            const image = document.getElementById('image-preview');
-            if (image.src && image.src.startsWith('data:image')) {
-                doc.addImage(image.src, 'JPEG', 10, y, 50, 50);
-            }
-
-            doc.save(`${nom}_fiche_personnage.pdf`);
-        });
-    </script>
+    });
+</script>
 </body>
 </html>
