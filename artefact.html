@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Création de Fiche Artefact</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        #image-preview {
+            margin-top: 10px;
+            max-width: 200px;
+            max-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Créer une Fiche Artefact</h1>
+    <form id="fiche-form">
+        <div class="form-group">
+            <label for="nom">Nom de l'artefact :</label>
+            <input type="text" id="nom" name="nom" required>
+        </div>
+        <div class="form-group">
+            <label for="origine">Origine :</label>
+            <input type="text" id="origine" name="origine">
+        </div>
+        <div class="form-group">
+            <label for="materiaux">Matériaux utilisés :</label>
+            <input type="text" id="materiaux" name="materiaux" placeholder="Séparez par des virgules">
+        </div>
+        <div class="form-group">
+            <label for="pouvoirs">Pouvoirs ou capacités :</label>
+            <textarea id="pouvoirs" name="pouvoirs"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="histoire">Histoire ou légende liée :</label>
+            <textarea id="histoire" name="histoire"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="utilisateurs">Utilisateurs célèbres :</label>
+            <input type="text" id="utilisateurs" name="utilisateurs" placeholder="Séparez par des virgules">
+        </div>
+        <div class="form-group">
+            <label for="effets">Effets secondaires ou malédictions :</label>
+            <textarea id="effets" name="effets"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="image">Télécharger une image :</label>
+            <input type="file" id="image" name="image" accept="image/*">
+            <img id="image-preview" alt="Aperçu de l'image">
+        </div>
+        <button type="button" id="telecharger-pdf">Télécharger en PDF</button>
+    </form>
+
+    <script>
+        document.getElementById('image').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('image-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('telecharger-pdf').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const nom = document.getElementById('nom').value;
+            const origine = document.getElementById('origine').value;
+            const materiaux = document.getElementById('materiaux').value;
+            const pouvoirs = document.getElementById('pouvoirs').value;
+            const histoire = document.getElementById('histoire').value;
+            const utilisateurs = document.getElementById('utilisateurs').value;
+            const effets = document.getElementById('effets').value;
+
+            let y = 10;
+            doc.text(`Nom : ${nom}`, 10, y);
+            y += 10;
+            doc.text(`Origine : ${origine}`, 10, y);
+            y += 10;
+            doc.text(`Matériaux : ${materiaux}`, 10, y);
+            y += 10;
+            doc.text(`Pouvoirs ou capacités :`, 10, y);
+            y += 10;
+            doc.text(pouvoirs, 10, y);
+            y += 20;
+            doc.text(`Histoire ou légende :`, 10, y);
+            y += 10;
+            doc.text(histoire, 10, y);
+            y += 20;
+            doc.text(`Utilisateurs célèbres : ${utilisateurs}`, 10, y);
+            y += 10;
+            doc.text(`Effets secondaires ou malédictions :`, 10, y);
+            y += 10;
+            doc.text(effets, 10, y);
+
+            const image = document.getElementById('image-preview');
+            if (image.src && image.src.startsWith('data:image')) {
+                doc.addImage(image.src, 'JPEG', 10, y, 50, 50);
+            }
+
+            doc.save(`${nom}_fiche_artefact.pdf`);
+        });
+    </script>
+</body>
+</html>
