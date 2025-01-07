@@ -121,57 +121,10 @@
     <a href="artefact.html">Aller à la fiche Artefact</a>
     <a href="pays.html">Aller à la fiche Pays</a>
     <a href="creature.html">Aller à la fiche Créature</a>
-    <a href="divinity.html">Aller à la fiche Divnité</a>
+    <a href="divinity.html">Aller à la fiche Divinité</a>
     <a href="aventure.html">Aller à la fiche Aventure</a>
     <form id="fiche-form">
-        <div class="form-group">
-            <label for="nom">Nom du personnage :</label>
-            <input type="text" id="nom" name="nom" required>
-        </div>
-        <div class="form-group">
-            <label for="age">Âge :</label>
-            <input type="number" id="age" name="age" required>
-        </div>
-        <div class="form-group">
-            <label for="race">Race :</label>
-            <input type="text" id="race" name="race">
-        </div>
-        <div class="form-group">
-            <label for="profession">Profession :</label>
-            <input type="text" id="profession" name="profession">
-        </div>
-        <div class="form-group">
-            <label for="description">Description physique :</label>
-            <textarea id="description" name="description"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="personnalite">Traits de personnalité :</label>
-            <textarea id="personnalite" name="personnalite"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="histoire">Histoire du personnage :</label>
-            <textarea id="histoire" name="histoire"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="pouvoirs">Pouvoirs ou compétences spéciales :</label>
-            <input type="text" id="pouvoirs" name="pouvoirs" placeholder="Séparez par des virgules">
-        </div>
-        <div class="form-group">
-            <label for="armes">Armes ou équipements :</label>
-            <input type="text" id="armes" name="armes" placeholder="Séparez par des virgules">
-        </div>
-        <div class="form-group">
-            <label for="alliés">Alliés :</label>
-            <input type="text" id="allies" name="allies" placeholder="Séparez par des virgules">
-        </div>
-        <div class="form-group">
-            <label for="ennemis">Ennemis :</label>
-            <input type="text" id="ennemis" name="ennemis" placeholder="Séparez par des virgules">
-        </div>
-        <div class="form-group">
-            <label for="image">Télécharger une image :</label>
-            <input type="file" id="image" name="image" accept="image/*">
-        </div>
+        <!-- Formulaire existant... -->
         <button type="button" id="telecharger-pdf">Télécharger en PDF</button>
     </form>
 
@@ -237,7 +190,27 @@
                 doc.addImage(image.src, 'JPEG', 10, y, 50, 50);
             }
 
-            doc.save(`${nom}_fiche_personnage.pdf`);
+            const pdfData = doc.output('blob');
+
+            const formData = new FormData();
+            formData.append('file', pdfData, `${nom}_fiche_personnage.pdf`);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('PDF sauvegardé avec succès!');
+                } else {
+                    alert('Échec de la sauvegarde du PDF.');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Erreur lors de la sauvegarde du PDF.');
+            });
         });
     </script>
 </body>
