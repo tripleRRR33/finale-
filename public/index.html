@@ -238,27 +238,7 @@
                 doc.addImage(image.src, 'JPEG', 10, y, 50, 50);
             }
 
-            const pdfData = doc.output('blob');
-
-            const formData = new FormData();
-            formData.append('file', pdfData, `${nom}_fiche_personnage.pdf`);
-
-            fetch('/upload', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('PDF sauvegardé avec succès!');
-                } else {
-                    alert('Échec de la sauvegarde du PDF.');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                alert('Erreur lors de la sauvegarde du PDF.');
-            });
+            doc.save(`${nom}_fiche_personnage.pdf`);
         });
     </script>
 </body>
