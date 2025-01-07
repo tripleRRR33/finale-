@@ -28,6 +28,28 @@
         <!-- Les liens vers les PDF seront ajoutés ici -->
     </div>
     <script>
+        fetch('/path/to/pdf/directory')  <!-- Remplacez par le chemin réel -->
+            .then(response => response.json())
+            .then(data => {
+                const gallery = document.querySelector('.gallery');
+                data.forEach(pdf => {
+                    const link = document.createElement('a');
+                    link.href = `/path/to/pdf/directory/${pdf}`;  <!-- Remplacez par le chemin réel -->
+                    link.textContent = pdf;
+                    gallery.appendChild(link);
+                });
+            })
+            .catch(error => console.error('Error fetching PDFs:', error));
+    </script>
+</body>
+</html>
+</head>
+<body>
+    <h1>Galerie des PDFs</h1>
+    <div class="gallery">
+        <!-- Les liens vers les PDF seront ajoutés ici -->
+    </div>
+    <script>
         fetch('path/to/pdf/directory')
             .then(response => response.json())
             .then(data => {
