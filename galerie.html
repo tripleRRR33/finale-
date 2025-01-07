@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galerie des PDFs</title>
+    <style>
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .gallery a {
+            margin: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+        .gallery img {
+            max-width: 200px;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Galerie des PDFs</h1>
+    <div class="gallery">
+        <!-- Les liens vers les PDF seront ajoutés ici -->
+    </div>
+    <script>
+        fetch('path/to/pdf/directory')
+            .then(response => response.json())
+            .then(data => {
+                const gallery = document.querySelector('.gallery');
+                data.forEach(pdf => {
+                    const link = document.createElement('a');
+                    link.href = `path/to/pdf/directory/${pdf}`;
+                    link.textContent = pdf;
+                    gallery.appendChild(link);
+                });
+            });
+    </script>
+</body>
+</html>
