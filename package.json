@@ -1,13 +1,11 @@
 {
   "name": "finale-",
   "version": "1.0.0",
-  "main": "server.js",
   "scripts": {
-    "start": "node server.js",
     "build": "echo 'No build script provided'"
   },
   "dependencies": {
-    "express": "^4.17.1",
-    "multer": "^1.4.2"
+    "aws-sdk": "^2.1048.0",
+    "busboy": "^1.6.0"
   }
 }
