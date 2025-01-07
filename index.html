@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Création de Fiche Personnage</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        #image-preview {
+            margin-top: 10px;
+            max-width: 200px;
+            max-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Créer une Fiche Personnage</h1>
+    <form id="fiche-form">
+        <div class="form-group">
+            <label for="nom">Nom du personnage :</label>
+            <input type="text" id="nom" name="nom" required>
+        </div>
+        <div class="form-group">
+            <label for="age">Âge :</label>
+            <input type="number" id="age" name="age" required>
+        </div>
+        <div class="form-group">
+            <label for="race">Race :</label>
+            <input type="text" id="race" name="race">
+        </div>
+        <div class="form-group">
+            <label for="profession">Profession :</label>
+            <input type="text" id="profession" name="profession">
+        </div>
+        <div class="form-group">
+            <label for="description">Description physique :</label>
+            <textarea id="description" name="description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="personnalite">Traits de personnalité :</label>
+            <textarea id="personnalite" name="personnalite"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="histoire">Histoire du personnage :</label>
+            <textarea id="histoire" name="histoire"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="pouvoirs">Pouvoirs ou compétences spéciales :</label>
+            <input type="text" id="pouvoirs" name="pouvoirs" placeholder="Séparez par des virgules">
+        </div>
+        <div class="form-group">
+            <label for="armes">Armes ou équipements :</label>
+            <input type="text" id="armes" name="armes" placeholder="Séparez par des virgules">
+        </div>
+        <div class="form-group">
+            <label for="alliés">Alliés :</label>
+            <input type="text" id="allies" name="allies" placeholder="Séparez par des virgules">
+        </div>
+        <div class="form-group">
+            <label for="ennemis">Ennemis :</label>
+            <input type="text" id="ennemis" name="ennemis" placeholder="Séparez par des virgules">
+        </div>
+        <div class="form-group">
+            <label for="image">Télécharger une image :</label>
+            <input type="file" id="image" name="image" accept="image/*">
+            <img id="image-preview" alt="Aperçu de l'image">
+        </div>
+        <button type="button" id="telecharger-pdf">Télécharger en PDF</button>
+    </form>
+
+    <script>
+        document.getElementById('image').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('image-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('telecharger-pdf').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const nom = document.getElementById('nom').value;
+            const age = document.getElementById('age').value;
+            const race = document.getElementById('race').value;
+            const profession = document.getElementById('profession').value;
+            const description = document.getElementById('description').value;
+            const personnalite = document.getElementById('personnalite').value;
+            const histoire = document.getElementById('histoire').value;
+            const pouvoirs = document.getElementById('pouvoirs').value;
+            const armes = document.getElementById('armes').value;
+            const allies = document.getElementById('allies').value;
+            const ennemis = document.getElementById('ennemis').value;
+
+            let y = 10;
+            doc.text(`Nom : ${nom}`, 10, y);
+            y += 10;
+            doc.text(`Âge : ${age}`, 10, y);
+            y += 10;
+            doc.text(`Race : ${race}`, 10, y);
+            y += 10;
+            doc.text(`Profession : ${profession}`, 10, y);
+            y += 10;
+            doc.text(`Description physique :`, 10, y);
+            y += 10;
+            doc.text(description, 10, y);
+            y += 20;
+            doc.text(`Traits de personnalité :`, 10, y);
+            y += 10;
+            doc.text(personnalite, 10, y);
+            y += 20;
+            doc.text(`Histoire :`, 10, y);
+            y += 10;
+            doc.text(histoire, 10, y);
+            y += 20;
+            doc.text(`Pouvoirs : ${pouvoirs}`, 10, y);
+            y += 10;
+            doc.text(`Armes : ${armes}`, 10, y);
+            y += 10;
+            doc.text(`Alliés : ${allies}`, 10, y);
+            y += 10;
+            doc.text(`Ennemis : ${ennemis}`, 10, y);
+
+            const image = document.getElementById('image-preview');
+            if (image.src && image.src.startsWith('data:image')) {
+                doc.addImage(image.src, 'JPEG', 10, y, 50, 50);
+            }
+
+            doc.save(`${nom}_fiche_personnage.pdf`);
+        });
+    </script>
+</body>
+</html>
